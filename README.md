@@ -1,0 +1,3 @@
+# simple chat app using socket
+
+when user stop typing broadcast msg also disabled within 2sec...
