@@ -9,9 +9,14 @@ boardcaast_msg=document.getElementById('boardcaast_msg');
 submit_your_chat.addEventListener('click',function(){
     socket.emit('chat',{msg:write_msg_here.value,user:user_name.value});
 });
-
-write_msg_here.addEventListener('keypress',function(){
+var i= 0;
+var tid = 0;
+write_msg_here.addEventListener('keypress',function(e){
+    console.log(e.which);
+    
+    
     socket.emit('typing',{user:user_name.value});
+    
 });
 
 socket.on('chat',function(data){
@@ -26,13 +31,26 @@ socket.on('chat',function(data){
     '</li>';
 
 });
-
+function stop_buffer_if_not_type_within_2sec(i){
+    if(i==0){
+        clearTimeout ( tid );
+        tid = setTimeout(stop_typing,2000);
+        i=1;
+    }else{
+        clearTimeout ( tid );
+        i=0;
+    }
+}
+function stop_typing(){
+    console.log('stop typeing....');
+    boardcaast_msg.innerHTML = '';
+}
 socket.on('typing',function(data){
-    console.log(data.user);
+    
     if(data){
         boardcaast_msg.innerHTML = '<p>'+data.user+' is typing msg</p>';
     }else{
         boardcaast_msg.innerHTML = '';
     }
-
+    stop_buffer_if_not_type_within_2sec(i);
 });
